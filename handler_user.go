@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/FrankBonanno/go-web-scraper/internal/auth"
 	"github.com/FrankBonanno/go-web-scraper/internal/database"
 	"github.com/google/uuid"
 )
@@ -39,18 +38,6 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 	respondWithJson(w, 201, databaseUserToUser(user))
 }
 
-func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := auth.GetAPIKey(r.Header)
-	if err != nil {
-		resondWithError(w, 403, fmt.Sprintf("Auth error: %s", err))
-		return
-	}
-
-	user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
-	if err != nil {
-		resondWithError(w, 400, fmt.Sprintf("Couldn't get user: %s", err))
-		return
-	}
-
+func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJson(w, 200, databaseUserToUser(user))
 }
